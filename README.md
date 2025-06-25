@@ -9,8 +9,8 @@
 `todo.txt` is updated automatically after every action.
 
 ## Example of usage:
-![Task Adding](function_menu.png)
-![Task List](task_list.png)
+![Addind a task](pic_add_task.png)
+![Task List](pic_list_tasks.png)
 
 ```bash
 lua todo_app.lua
