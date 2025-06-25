@@ -79,7 +79,7 @@ end
 local function save_tasks(tasks)
     local file = io.open(filename, "w")
     for _, task in ipairs(tasks) do
-        file:write((task.done and "1" or "0") .. "|" .. task.timestamp .. "|" .. task.text .. "\n")
+        file:write((task.done and "1" or "0") .. "|" .. task.timestamp .. "|" .. task.text .. "\n") -- short-circuit logic
     end
     file:close()
 end
