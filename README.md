@@ -13,4 +13,4 @@
 ![Task List](pic_list_tasks.png)
 
 ```bash
-lua todo_app.lua
+lua main.lua

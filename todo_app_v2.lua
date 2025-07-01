@@ -1,3 +1,10 @@
+-- split I/O part, for the easiness of testing the logic that doesn't involve I/O handling
+-- allow us to test on add, delete, mark done/undone
+
+
+local todo_app = {}
+
+
 local todo_app = {}
 
 
@@ -25,12 +32,15 @@ function todo_app.load_tasks()
     return tasks
 end
 
-function todo_app.add_task(tasks)
+function todo_app.get_new_task_info()
     io.write("Enter task: ")
     local text = io.read()
     local timestamp = os.date("%Y-%m-%d %H:%M")
-    table.insert(tasks, {done = false, timestamp = timestamp, text = text})
-    print("Task added at " .. timestamp)
+    return {done = false, timestamp = timestamp, text = text}
+end
+
+function todo_app.add_task(tasks, task)
+    table.insert(tasks, task)
 end
 
 
@@ -45,36 +55,42 @@ function todo_app.list_tasks(tasks)
     end
 end
 
-function todo_app.mark_done(tasks)
-    io.write("Task number to mark as done: ")
+function todo_app.get_task_idx(prompt)
+    io.write(prompt)
     local idx = tonumber(io.read())
+    return idx
+end
+
+function todo_app.mark_done(tasks, idx, verbose)
     if tasks[idx] then
         tasks[idx].done = true
-        print("Task marked as done.")
+        if verbose then print("Task marked as done.")  end
+        return true
     else
-        print("Invalid task number.")
+        if verbose then print("Invalid task number.") end
+        return false
     end
 end
 
-function todo_app.mark_undone(tasks)
-    io.write("Task number to mark as undone: ")
-    local idx = tonumber(io.read())
+function todo_app.mark_undone(tasks, idx, verbose)
     if tasks[idx] then
         tasks[idx].done = false
-        print("Task marked as undone.")
+        if verbose then print("Task marked as done.")  end
+        return true
     else
-        print("Invalid task number.")
+        if verbose then print("Invalid task number.") end
+        return false
     end
 end
 
-function todo_app.delete_task(tasks)
-    io.write("Task number to delete: ")
-    local idx = tonumber(io.read())
+function todo_app.delete_task(tasks, idx, verbose)
     if tasks[idx] then
         table.remove(tasks, idx)
-        print("Task deleted.")
+        if verbose then print("Task deleted.") end
+        return true
     else
-        print("Invalid task number.")
+        if verbose then print("Invalid task number.") end
+        return false
     end
 end
 
@@ -103,18 +119,23 @@ function todo_app.run()
 
         local choice = io.read()
         if choice == "1" then
-            todo_app.add_task(tasks)
+            local new_task = todo_app.get_new_task_info()
+            todo_app.add_task(tasks, new_task)
             todo_app.save_tasks(tasks)
+            print("Task added")
         elseif choice == "2" then
             todo_app.list_tasks(tasks)
         elseif choice == "3" then
-            todo_app.mark_done(tasks)
+            local idx = todo_app.get_task_idx("Task number to mark as done: ")
+            todo_app.mark_done(tasks, idx, true)
             todo_app.save_tasks(tasks)
         elseif choice == "4" then
-            todo_app.mark_undone(tasks)
+            local idx = todo_app.get_task_idx("Task number to mark as undone: ")
+            todo_app.mark_undone(tasks, idx, true)
             todo_app.save_tasks(tasks)
         elseif choice == "5" then
-            todo_app.delete_task(tasks)
+            local idx = todo_app.get_task_idx("Task number to delete: ")
+            todo_app.delete_task(tasks, idx, true)
             todo_app.save_tasks(tasks)
         elseif choice == "6" then
             print("Goodbye!")
